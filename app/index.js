@@ -25,8 +25,8 @@ async function getDirectUrl(url) {
     const info = await playdl.video_info(url);
     return info.video_details?.url;
   } else if (url.includes("youtube")) {
-    const info = await playdl.video_info(url);
-    return info.video_details?.url;
+    const stream = await playdl.stream(url);
+    return stream.url;
   } else {
     throw new Error("Plataforma não suportada");
   }
