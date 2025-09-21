@@ -32,6 +32,31 @@ async function getDirectUrl(url) {
   }
 }
 
+app.get("/api/download/:id", async (req, res) => {
+  try {
+    // Decodifica URL original
+    const videoUrl = decodeURIComponent(req.params.id);
+
+    // Validação simples
+    if (!videoUrl.startsWith("http")) {
+      return res.status(400).json({ error: "URL inválida" });
+    }
+
+    // Stream do vídeo
+    const stream = await playdl.stream(videoUrl);
+
+    res.setHeader("Content-Type", "video/mp4");
+    res.setHeader("Content-Disposition", 'attachment; filename="video.mp4"');
+
+    stream.stream.pipe(res);
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message || "Erro ao processar vídeo" });
+  }
+});
+
+
 // Endpoint para baixar vídeo
 app.post("/api/download", async (req, res) => {
   try {
